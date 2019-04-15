@@ -1,0 +1,5 @@
+ornament Right "aergag"
+rectangle 206 85 262 227
+ornament Top "daedq"
+ornament Bottom "ad2"
+rectangle 612 145 122 154

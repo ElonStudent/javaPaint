@@ -1,0 +1,4 @@
+ellipse 349 141 241 170
+ornament Left "hello world"
+ornament Top "bob"
+rectangle 245 34 259 214
