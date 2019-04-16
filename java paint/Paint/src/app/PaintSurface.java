@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.ButtonGroup;
@@ -43,11 +44,13 @@ public class PaintSurface extends JComponent {
   private ShapesFrame frame = ShapesFrame.getInstance();
   private ShapeActions actions = ShapeActions.getInstance();
 
+  private int oldSX;
+  private int oldSY;
+
   public String shapeType = frame.getShapeType();
   public ArrayList<BaseShape> shapes = new ArrayList<BaseShape>();
 
-  ArrayList<ArrayList<BaseShape>> groupShapes = new ArrayList<ArrayList<BaseShape>>();
-  ArrayList<BaseShape> availableShapes = new ArrayList<BaseShape>();
+  private ArrayList<BaseShape> availableShapes = new ArrayList<BaseShape>();
 
   // used for the singleton design pattern
   public static PaintSurface getInstance() {
@@ -86,6 +89,25 @@ public class PaintSurface extends JComponent {
         } else if (shapeType == "Oval") {
           Shapes oval = new TestDecorator(new Circle());
           oval.draw(startDrag.x, startDrag.y, e.getX(), e.getY());
+        }else if(shapeType == "Group"){
+          int scount = -1;
+          List<BaseShape> test = new ArrayList<BaseShape>();
+          for (BaseShape s : shapes){
+            scount++;
+            if (s.shape.contains(clickedPoint.x, clickedPoint.y)){
+              for (BaseShape x : shapes){
+                if(x.getX() >= startDrag.x && x.getY() >= startDrag.y && x.getWidth() <= endDrag.x && x.getHeight() <= endDrag.y){
+                  if(s != x)
+                    test.add(x);
+                }
+                else{
+                  System.out.print("no shapes");
+                }
+              }
+              group(scount, test);
+              actions.saveAction();
+            }
+          }
         }
         if (selectedShapeVal != -1) {
           if (shapeType == "Select") {
@@ -129,12 +151,38 @@ public class PaintSurface extends JComponent {
     });
   }
 
+  public void group(int ShapeID, List<BaseShape> shape){
+    BaseShape s = shapes.get(ShapeID);
+    for (BaseShape b : shape)
+      s.CreateList(b);
+    actions.saveAction();
+  }
+
   private void DragObject(int val, Point e) {
     actions.saveAction();
     availableShapes.clear();
     BaseShape s = shapes.get(val);
 
-    s.move(e.x, e.y);
+    oldSX = s.getX();
+    oldSY = s.getY();
+    if(s.GetList() != null){
+      s.move(e.x, e.y);
+      for(BaseShape b : s.GetList()){
+        b.move(b.getX() + (e.x - oldSX), b.getY() + (e.y - oldSY));
+      }
+    }else if (s.GetList() == null){
+      for (BaseShape x : shapes){
+        if(x.GetList() != null){
+          if(x.GetList().contains(s) && x.GetList() != null){
+            x.move(x.getX() + (e.x - oldSX), x.getY() + (e.y - oldSY));
+            for(BaseShape t : x.GetList())
+              t.move(t.getX() + (e.x - oldSX), t.getY() + (e.y - oldSY));
+          }
+        } else {
+          s.move(e.x, e.y);
+        }
+      }
+    }
   }
 
   private void ResizeObject(int val, Point point) {
@@ -142,7 +190,27 @@ public class PaintSurface extends JComponent {
     BaseShape s = shapes.get(selectedShapeVal);
 
     actions.saveAction();
-    s.resize(endDrag.x, endDrag.y);
+    oldSX = s.getX();
+    oldSY = s.getY();
+    if(s.GetList() != null){
+      s.resize(endDrag.x, endDrag.y);
+      for(BaseShape b : s.GetList()){
+        b.resize(b.getX() + (endDrag.x - oldSX), b.getY() + (endDrag.y - oldSY));
+      }
+    }else if (s.GetList() == null){
+      for (BaseShape x : shapes){
+        if(x.GetList() != null){
+          if(x.GetList().contains(s) && x.GetList() != null){
+            x.resize(x.getX() + (endDrag.x - oldSX), x.getY() + (endDrag.y - oldSY));
+            for(BaseShape t : x.GetList())
+              t.resize(t.getX() + (endDrag.x - oldSX), t.getY() + (endDrag.y - oldSY));
+          }
+        } else {
+          s.resize(endDrag.x, endDrag.y);
+        }
+      }
+    }
+    //s.resize(endDrag.x, endDrag.y);
   }
 
   private void paintBackground(Graphics2D g2) {
@@ -229,6 +297,8 @@ public class PaintSurface extends JComponent {
       if (shapeType == "Oval") {
         r = new Ellipse2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
       } else if (shapeType == "Rectangle") {
+        r = new Rectangle2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
+      } else if (shapeType == "Group") {
         r = new Rectangle2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
       }
       g2.draw(r);

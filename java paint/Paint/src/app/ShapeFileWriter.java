@@ -77,9 +77,11 @@ public class ShapeFileWriter {
                 //r (.*?)\s(.*?)\s\"(.*?)\"
                 //r old (\\w*)\\s(\\w*)\\s(\\\"\\w*\\\")
                 if(line.startsWith("ornament")){
-                    System.out.println("Place ornament in hasmap");
-                    System.out.println("line = " + line);
-                    // System.out.println(ornamentMatch.group(1));
+                    if(ornamentMatch.find()){
+                        System.out.println("Place ornament in hasmap");
+                        System.out.println("line = " + line);
+                        System.out.println(ornamentMatch.group(1));
+                    }
                 }
                 if (line.startsWith("rectangle")) {
                     if (matcher.find()) {

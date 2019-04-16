@@ -1,5 +1,6 @@
 package app;
 
+import java.util.List;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
@@ -18,6 +19,7 @@ public abstract class BaseShape {
     MoveBehaviour moveBehaviour;
     ResizeBehaviour resizeBehaviour;
     ArrayList<BaseText> textList = new ArrayList<BaseText>();
+    List<BaseShape> group;
      
     Shape shape;
 
@@ -91,5 +93,18 @@ public abstract class BaseShape {
         for(BaseText text : textList){
             text.setPos(getX(), getY(), getWidth(), getHeight());
         }
+    }
+
+    public void CreateList(BaseShape addShape){
+        if(group == null){
+            group = new ArrayList<BaseShape>();
+            group.add(addShape);
+        }else{
+            group.add(addShape);
+        }
+    }
+
+    public List<BaseShape> GetList(){
+        return group;
     }
 }
