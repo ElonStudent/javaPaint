@@ -1,25 +1,17 @@
 package app;
 
-import java.awt.Shape;
-import java.awt.geom.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -38,17 +30,13 @@ public class ShapeFileWriter {
                 new File(standardFilePath + savedItemPath + fileName + ".txt"));
         try (OutputStreamWriter outputStreamWriter = new OutputStreamWriter(fileStream, "windows-1252")) {
             for (BaseShape s : shapeList) {
-                int width = s.getWidth();
-                int height = s.getHeight();
-                int shapeX = s.getX();
-                int shapeY = s.getY();
                 String stringText = "";
                 String groupNumText = "";
+                String tabSpacer = "\t";
+                String repeatTab = tabSpacer.repeat(groupNum+1);
 
                 if(s.GetList() != null){
                     groupNum++;
-                    String tabSpacer = "\t";
-                    String repeatTab = tabSpacer.repeat(groupNum+1);
                     if(groupNum == 0){
                         groupNumText += "group" + " "+groupNum +"\n";
                         repeatTab = tabSpacer.repeat(groupNum+1);
@@ -59,12 +47,12 @@ public class ShapeFileWriter {
                         stringText += "ornament " + text.position + " \""+ text.text + "\"\n";
                     if (s instanceof Rectangle) {
                         outputStreamWriter
-                                .write(groupNumText + repeatTab +stringText + "rectangle" + " " + shapeX + " " + shapeY + " " + width + " " + height + '\n');
-                        System.out.println(stringText + "Rectangle: " + shapeX + " " + shapeY + " " + width + " " + height);
+                                .write(groupNumText + repeatTab +stringText + "rectangle" + " " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight() + '\n');
+                        System.out.println(stringText + "Rectangle: " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight());
                     } else if (s instanceof Circle) {
                         outputStreamWriter
-                                .write(groupNumText + repeatTab +stringText + "ellipse" + " " + shapeX + " " + shapeY + " " + width + " " + height + '\n');
-                        System.out.println(stringText + "Ellipse: " + shapeX + " " + shapeY + " " + width + " " + height);
+                                .write(groupNumText + repeatTab +stringText + "ellipse" + " " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight() + '\n');
+                        System.out.println(stringText + "Ellipse: " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight());
                     }
                     for (BaseShape b : s.GetList()){
                         for (BaseText text : b.textList) {
@@ -85,7 +73,6 @@ public class ShapeFileWriter {
                     for (BaseShape x : shapeList){
                         try{
                             for (BaseShape t : x.GetList()){
-                                
                                 if (t.GetList().contains(s) && t.GetList() != null){
                                     System.out.println("In a group");
                                 }
@@ -95,15 +82,14 @@ public class ShapeFileWriter {
                                     }
                                     if (s instanceof Rectangle) {
                                         outputStreamWriter
-                                                .write(stringText + "rectangle" + " " + shapeX + " " + shapeY + " " + width + " " + height + '\n');
-                                        System.out.println(stringText + "Rectangle: " + shapeX + " " + shapeY + " " + width + " " + height);
+                                                .write(stringText + "rectangle" + " " +s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight() + '\n');
+                                        System.out.println(stringText + "Rectangle: " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight());
                                     } else if (s instanceof Circle) {
                                         outputStreamWriter
-                                                .write(stringText + "ellipse" + " " + shapeX + " " + shapeY + " " + width + " " + height + '\n');
-                                        System.out.println(stringText + "Ellipse: " + shapeX + " " + shapeY + " " + width + " " + height);
+                                                .write(stringText + "ellipse" + " " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight() + '\n');
+                                        System.out.println(stringText + "Ellipse: " + s.getX() + " " + s.getY() + " " + s.getWidth() + " " + s.getHeight());
                                     }
                                 }
-
                             }
                         }catch(NullPointerException e){}
                     }
@@ -133,16 +119,13 @@ public class ShapeFileWriter {
 
                 if(line.contains("group")){
                     if(groupMatch.find()){
-                        System.out.println(groupMatch.group(2)); // number of group
                         groupNumLoad = groupMatch.group(2);
+                        if(!tA.isEmpty())
+                            tA.clear();
                     }
                 }
                 if(line.contains("ornament")){
                     if(ornamentMatch.find()){
-                        System.out.println("Place ornament in hasmap");
-                        System.out.println("line = " + line);
-                        System.out.println(ornamentMatch.group(2)); //position
-                        System.out.println(ornamentMatch.group(3)); // text
                         ornamentPos = ornamentMatch.group(2);
                         ornamentText = ornamentMatch.group(3);
                     }
@@ -153,7 +136,6 @@ public class ShapeFileWriter {
                         rectangle.draw(Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)),
                                 Integer.parseInt(matcher.group(2)) + Integer.parseInt(matcher.group(4)),
                                 Integer.parseInt(matcher.group(3)) + Integer.parseInt(matcher.group(5)));
-                        System.out.println(matcher.group(1));
                         tA.add(rectangle);
 
                         if(ornamentPos != "" && ornamentText != ""){
@@ -161,9 +143,8 @@ public class ShapeFileWriter {
                             ornamentPos = "";
                             ornamentText = "";
                         }
-                        if(groupNumLoad != ""){
-                            for(BaseShape s : tA)
-                                s.CreateList(rectangle);
+                        if(groupNumLoad != "" && !tA.isEmpty()){
+                            tA.get(0).CreateList(rectangle);
                         }
                     }
                 } else if (line.contains("ellipse")) {
@@ -177,9 +158,8 @@ public class ShapeFileWriter {
                             ornamentPos = "";
                             ornamentText = "";
                         }
-                        if(groupNumLoad != ""){
-                            for(BaseShape s : tA)
-                                s.CreateList(oval);
+                        if(groupNumLoad != "" && !tA.isEmpty()){
+                            tA.get(0).CreateList(oval);
                         }
                     }
                 }
