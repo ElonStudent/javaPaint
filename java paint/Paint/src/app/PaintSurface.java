@@ -108,6 +108,16 @@ public class PaintSurface extends JComponent {
               actions.saveAction();
             }
           }
+        }else if(shapeType == "Ungroup"){
+          int scount = -1;
+          for (BaseShape s : shapes){
+            scount++;
+            if(s.shape.contains(clickedPoint.x, clickedPoint.y) && s.GetList() != null){
+              ungroup(scount);
+            }else{
+              System.out.println("No group found in this shape/ not  parent of a group");
+            }
+          }
         }
         if (selectedShapeVal != -1) {
           if (shapeType == "Select") {
@@ -156,6 +166,14 @@ public class PaintSurface extends JComponent {
     for (BaseShape b : shape)
       s.CreateList(b);
     actions.saveAction();
+  }
+
+  public void ungroup(int ShapeID){
+    BaseShape s = shapes.get(ShapeID);
+    if(s.GetList() != null){
+      for (BaseShape b : s.GetList())
+        s.GetList().remove(b);
+    }
   }
 
   private void DragObject(int val, Point e) {
@@ -210,7 +228,6 @@ public class PaintSurface extends JComponent {
         }
       }
     }
-    //s.resize(endDrag.x, endDrag.y);
   }
 
   private void paintBackground(Graphics2D g2) {

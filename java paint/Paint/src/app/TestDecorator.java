@@ -16,6 +16,6 @@ public class TestDecorator extends ShapeDecorator {
 
    @Override
    public void addText(String position, String text) {
-
+      
    }
 }

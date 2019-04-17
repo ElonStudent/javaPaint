@@ -64,6 +64,7 @@ public class ShapesFrame extends JFrame implements ActionListener {
     JButton openButton = new JButton("Open");
     JButton saveButton = new JButton("Save");
     JRadioButton groupButton = new JRadioButton("Group");
+    JRadioButton ungroupButton = new JRadioButton("Ungroup");
     JRadioButton ovalButton = new JRadioButton("Oval");
     JRadioButton rectangleButton = new JRadioButton("Rectangle");
     JRadioButton selectButton = new JRadioButton("Select");
@@ -76,6 +77,7 @@ public class ShapesFrame extends JFrame implements ActionListener {
     CreateObjectInFrame(cbg, radioPanel, openButton);
     CreateObjectInFrame(cbg, radioPanel, saveButton);
     CreateObjectInFrame(cbg, radioPanel, groupButton);
+    CreateObjectInFrame(cbg, radioPanel, ungroupButton);
     CreateObjectInFrame(cbg, radioPanel, ovalButton);
     CreateObjectInFrame(cbg, radioPanel, rectangleButton);
     CreateObjectInFrame(cbg, radioPanel, selectButton);
