@@ -12,24 +12,34 @@ import java.util.logging.Logger;
  * 
  * @author Elon Gielink, Daan Eekhof
  */
+// used as the "BuyStock" replacement for the Command Pattern
 public class ShapeActions {
+  //<<singleton object>>
+  //Create instance
   private static ShapeActions instance = new ShapeActions();
 
+  //Create new shapeFileWriter
   private ShapeFileWriter f = new ShapeFileWriter();
 
+  //Uses the PaintSurface
   public PaintSurface surface;
+
+  //Create new list of actions (undo/redo)
   public ArrayList<ArrayList<BaseShape>> undo = new ArrayList<ArrayList<BaseShape>>();
   public ArrayList<ArrayList<BaseShape>> redo = new ArrayList<ArrayList<BaseShape>>();
 
-
+  //<<singleton object>>
+  //Return current instance
   public static ShapeActions getInstance() {
     return instance;
   }
 
+  //Save the action performed
   public void saveAction() {
     undo.add(clone(surface.shapes));
   }
 
+  //Undo the previous move
   public void undo() {
     if (undo.size() <= 0)
       return;
@@ -40,6 +50,7 @@ public class ShapeActions {
     surface.repaint();
   }
 
+  //Save the file
   public void save(){
     try {
       f.SaveShapeToFile(surface.shapes);
@@ -48,6 +59,7 @@ public class ShapeActions {
     }
   }
 
+  //Load the previous saven file
   public void load(){
     try {
       f.LoadShapeFromFile();
@@ -56,6 +68,7 @@ public class ShapeActions {
     }
   }
 
+  //Redo to previous move
   public void redo() {
     if (redo.size() <= 0)
       return;
@@ -66,16 +79,19 @@ public class ShapeActions {
     surface.repaint();
   }
 
+  //Clear all shapes from the surface
   public void clear() {
     saveAction();
     surface.shapes.clear();
   }
 
+  //Add shape to the surface
   public void addShapeToArray(BaseShape r) {
     saveAction();
     surface.shapes.add(r);
   }
-
+  
+  //Clone all shapes on the surface
   public ArrayList<BaseShape> clone(ArrayList<BaseShape> list) {
     ArrayList<BaseShape> clonedList = new ArrayList<BaseShape>(list.size());
     for (BaseShape shape : list) {

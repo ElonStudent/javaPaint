@@ -2,9 +2,8 @@ package app;
 
 import java.awt.Shape;
 
-/*
-interface for the shapes, every shape should implement the draw method
-*/
+//<<Strategy Pattern>>
+//Interface for moving a shape
 public interface MoveBehaviour{
     void move(Shape shape, int x, int y);
 }

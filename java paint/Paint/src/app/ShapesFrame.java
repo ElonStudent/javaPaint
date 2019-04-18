@@ -33,11 +33,16 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+//Create the frame
 public class ShapesFrame extends JFrame implements ActionListener {
+  //Create a vairable set to the ShapesFrame instance <<Singleton Pattern>>
   private static ShapesFrame instance = new ShapesFrame();
 
   private PaintSurface surface;
+
+  //Get the Command instance <<Singleton Pattern>>
   private Command command = Command.getInstance();
+  //Get the ShapeActions instance <<Singleton Pattern>>
   private ShapeActions actions = ShapeActions.getInstance();
   private ShapeUndo sUndo = new ShapeUndo(actions);
   private ShapeRedo sRedo = new ShapeRedo(actions);
@@ -51,11 +56,15 @@ public class ShapesFrame extends JFrame implements ActionListener {
   String[] textPos = new String[] { "Top", "Bottom", "Left", "Right" };
   JComboBox<String> textList = new JComboBox<>(textPos);
 
+  //<<singleton pattern>>
+  //return current instance
   public static ShapesFrame getInstance() {
     return instance;
   }
 
+  //Create all objects in the frame (buttons/layout)
   public void createDrawObj() {
+    //Get the instance of the PaintSurface <<Singleton Pattern>>
     surface = PaintSurface.getInstance();
     actions.surface = surface;
 
@@ -95,6 +104,7 @@ public class ShapesFrame extends JFrame implements ActionListener {
     this.setVisible(true);
   }
 
+  //Add the buttons to the frame
   private void CreateObjectInFrame(ButtonGroup group, JPanel panel, Component o) {
     panel.add(o);
 
@@ -112,6 +122,8 @@ public class ShapesFrame extends JFrame implements ActionListener {
     }
   }
 
+  //<<Command Pattern>>
+  //Execute the commands based on the action performed
   public void actionPerformed(ActionEvent ae) {
     if (ae.getActionCommand().toString() == "Clear") {
       command.addCommand(sClear);
@@ -138,10 +150,12 @@ public class ShapesFrame extends JFrame implements ActionListener {
     repaint();
   }
 
+  //returns the shapeType
   public String getShapeType() {
     return shapeType;
   }
-
+  
+  //returns all the shapes on the frame
   public ArrayList<Shape> getShapes() {
     return shapes;
   }

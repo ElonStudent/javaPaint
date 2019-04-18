@@ -35,13 +35,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PaintSurface extends JComponent {
+  //Create new instance of PaintSurface <<Singleton Pattern>>
   private static PaintSurface instance = new PaintSurface();
 
   private Point startDrag, endDrag, clickedPoint;
   private int selectedShapeVal = -1;
   private Shape draggingShape;
   private boolean dragging = false;
+  //Sets a vairable set to the frame instance <<Singleton Pattern>>
   private ShapesFrame frame = ShapesFrame.getInstance();
+  //Sets a vairable set to the ShapeActions instance <<Singleton Pattern>>
   private ShapeActions actions = ShapeActions.getInstance();
 
   private int oldSX;
@@ -52,14 +55,14 @@ public class PaintSurface extends JComponent {
 
   private ArrayList<BaseShape> availableShapes = new ArrayList<BaseShape>();
 
-  // used for the singleton design pattern
+  //Returns the paintsurface instance <<Singleton Pattern>>
   public static PaintSurface getInstance() {
     return instance;
   }
-
   public PaintSurface() {
+    //Checks mouse actions
     this.addMouseListener(new MouseAdapter() {
-
+      //Define position of the mouse by mousePressed location
       public void mousePressed(MouseEvent e) {
         shapeType = frame.getShapeType();
 
@@ -69,6 +72,7 @@ public class PaintSurface extends JComponent {
         clickedPoint.y = e.getPoint().y;
         endDrag = startDrag;
 
+        //Add text to a shape
         if (shapeType == "Top" || shapeType == "Bottom" || shapeType == "Left" || shapeType == "Right") {
           for (BaseShape s : shapes) {
             if (s.shape.contains(clickedPoint.x, clickedPoint.y)) {
@@ -81,6 +85,7 @@ public class PaintSurface extends JComponent {
         repaint();
       }
 
+      //Draw or change the shapes based on selected option
       public void mouseReleased(MouseEvent e) {
         availableShapes.clear();
         if (shapeType == "Rectangle") {
@@ -140,13 +145,13 @@ public class PaintSurface extends JComponent {
 
     });
 
+    //Resize or move the shape to a new location based on the position the mouse is dragged to
     this.addMouseMotionListener(new MouseMotionAdapter() {
       public void mouseDragged(MouseEvent e) {
         endDrag = new Point(e.getX(), e.getY());
         repaint();
         if (selectedShapeVal != -1) {
           dragging = true;
-          // System.out.println(shapeType);
           if (shapeType == "Resize") {
             BaseShape s = shapes.get(selectedShapeVal);
 
@@ -161,6 +166,7 @@ public class PaintSurface extends JComponent {
     });
   }
 
+  //Create a group based on the selected shape
   public void group(int ShapeID, List<BaseShape> shape){
     BaseShape s = shapes.get(ShapeID);
     for (BaseShape b : shape)
@@ -168,6 +174,7 @@ public class PaintSurface extends JComponent {
     actions.saveAction();
   }
 
+  //Removes the shapes from the group
   public void ungroup(int ShapeID){
     BaseShape s = shapes.get(ShapeID);
     if(s.GetList() != null){
@@ -176,6 +183,7 @@ public class PaintSurface extends JComponent {
     }
   }
 
+  //Move shape or group of shapes to a new location
   private void DragObject(int val, Point e) {
     actions.saveAction();
     availableShapes.clear();
@@ -203,6 +211,7 @@ public class PaintSurface extends JComponent {
     }
   }
 
+  //Resize a shape or a group of shapes
   private void ResizeObject(int val, Point point) {
     availableShapes.clear();
     BaseShape s = shapes.get(selectedShapeVal);
@@ -230,6 +239,7 @@ public class PaintSurface extends JComponent {
     }
   }
 
+  //Gives color to the shapes
   private void paintBackground(Graphics2D g2) {
     g2.setPaint(Color.LIGHT_GRAY);
     for (int i = 0; i < getSize().width; i += 10) {
@@ -243,6 +253,7 @@ public class PaintSurface extends JComponent {
     }
   }
 
+  //visualizes all the shapes in the frame
   public void paint(Graphics g) {
     if (shapeType != "Resize" || shapeType == "Select") {
       availableShapes.clear();
@@ -316,6 +327,8 @@ public class PaintSurface extends JComponent {
       } else if (shapeType == "Rectangle") {
         r = new Rectangle2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
       } else if (shapeType == "Group") {
+        r = new Rectangle2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
+      } else if (shapeType == "Ungroup") {
         r = new Rectangle2D.Float(Math.min(x, w), Math.min(y, h), Math.abs(x - w), Math.abs(y - h));
       }
       g2.draw(r);

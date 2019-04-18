@@ -17,12 +17,15 @@ import java.util.regex.Pattern;
  *
  * @author Daan Eekhof
  */
+//This class will create or load a savefile with the given shapes
 public class ShapeFileWriter {
+    //Define variables
     Path path = FileSystems.getDefault().getPath("").toAbsolutePath();
     private final String standardFilePath = path.toString().replace("\\", "/");
     private final String savedItemPath = "/saveFile/";
     private int groupNum = -1;
 
+    //Create a savefile
     public void SaveShapeToFile(ArrayList<BaseShape> shapeList) throws Exception {
         String fileName = "savedshapes";
         new File(standardFilePath + "/saveFile").mkdirs();
@@ -98,7 +101,8 @@ public class ShapeFileWriter {
             outputStreamWriter.close();
         }
     }
-
+    
+    //Load the savefile
     public void LoadShapeFromFile() throws Exception {
 
         String fileName = "savedshapes";

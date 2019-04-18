@@ -3,16 +3,19 @@ package app;
  * 
  * @author Elon Gielink
  */
+//Create text for the baseshape
 public class BaseText {
     int x, y;
     String text;
     String position;
 
+    //Constructor
     public BaseText(String text, String position) {
         this.text = text;
         this.position = position;
     }
-
+    
+    //Set position of the text
     public void setPos(int shapeX, int shapeY, int shapeWidth, int shapeHeight) {
         switch (position) {
         case "Top":

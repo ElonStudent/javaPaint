@@ -3,10 +3,8 @@ package app;
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 
-/*
-interface for the shapes, every shape should implement the draw method
-*/
-
+//<<Strategy Pattern>>
+//Resize the circle using ResizeBehaviour
 class ResizeCircle implements ResizeBehaviour {
     public void resize(Shape shape, int endX, int endY) {
         Ellipse2D.Float ellipse =(Ellipse2D.Float) shape;
